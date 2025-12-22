@@ -20,7 +20,7 @@ Docker CLI does not include a daemon on macOS.
 Colima provides a Linux VM with Docker Engine.
 
 ```bash
-colima start --cpu 12 --memory 17 --disk 60
+colima start --cpu 12 --memory 17
 docker context use colima
 docker ps
 ```
