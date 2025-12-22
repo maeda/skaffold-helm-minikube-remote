@@ -1,0 +1,10 @@
+FROM apache/airflow:slim-3.0.2-python3.11
+USER root
+RUN apt-get update \
+  && apt install -y --no-install-recommends default-jre
+
+USER airflow
+# install Python requirements, of not required
+COPY helm/airflow/requirements.txt .
+RUN pip3 install -r requirements.txt
+COPY --chown=airflow:root dags dags

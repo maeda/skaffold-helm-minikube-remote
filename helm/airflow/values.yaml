@@ -1,0 +1,4 @@
+airflow: 
+  postgresql:
+    image:
+      repository: bitnamilegacy/postgresql

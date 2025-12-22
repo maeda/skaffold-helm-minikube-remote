@@ -1,0 +1,23 @@
+airflow: 
+  executor: LocalExecutor
+
+  config:
+    AIRFLOW__CORE__EXECUTOR:
+      value: LocalExecutor
+    AIRFLOW__KUBERNETES__DAGS_IN_IMAGE:
+      value: "True"
+    GUNICORN_CMD_ARGS:
+      value: "--log-level DEBUG"
+
+  dags:
+    persistence:
+      enabled: false
+    gitSync:
+      enabled: false
+
+  logs:
+    persistence:
+      enabled: false
+
+  redis:
+    enabled: false
