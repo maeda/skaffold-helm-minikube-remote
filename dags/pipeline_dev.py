@@ -15,6 +15,13 @@ with DAG(
     start_date=datetime(2025, 1, 1),
     schedule="*/1 * * * *",  # a cada 1 minuto
     catchup=False,
+    access_control={
+		'group_1': {'can_read', 'can_edit'},
+		'group_2': {'can_read'},
+		'group_3': {'can_read', 'can_edit'},
+		'group_4': {'can_read', 'can_edit', 'can_delete'},
+		'group_5': {'can_read', 'can_edit', 'can_delete'},
+	},
     tags=["test", "dev"],
 ) as dag:
 

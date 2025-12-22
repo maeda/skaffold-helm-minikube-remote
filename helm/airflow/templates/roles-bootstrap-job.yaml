@@ -1,0 +1,34 @@
+{{- if .Values.rolesBootstrap.enabled }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: airflow-roles-bootstrap
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+spec:
+  backoffLimit: 3
+  template:
+    spec:
+      serviceAccountName: airflow-roles-bootstrap
+      restartPolicy: Never
+      containers:
+        - name: bootstrap
+          image: bitnami/kubectl:latest
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              set -euo pipefail
+
+              echo "Waiting for airflow-api-server to be Ready..."
+              kubectl rollout status deployment/airflow-api-server -n {{ .Release.Namespace }} --timeout=300s
+
+              echo "Creating missing Airflow roles (idempotent)..."
+              {{- range $role := .Values.rolesBootstrap.roles }}
+              kubectl exec -n {{ $.Release.Namespace }} deployment/airflow-api-server -- \
+                airflow roles create {{ $role }} || true
+              {{- end }}
+
+              echo "Done."
+{{- end }}
