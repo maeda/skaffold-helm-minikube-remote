@@ -51,6 +51,17 @@ install_helm() {
     if ! command_exists helm; then
         echo "Helm not found. Installing Helm..."
         brew install helm@4.0.4
+
+        helm repo add apache-airflow https://airflow.apache.org # add airflow helm repo
+
+        # 1. Add the Helm repo
+        helm repo add csi-secrets-store-provider-azure https://azure.github.io/secrets-store-csi-driver-provider-azure/charts
+        helm repo update
+
+        # 2. Install the Driver and the Azure Provider
+        helm install csi csi-secrets-store-provider-azure/csi-secrets-store-provider-azure \
+            --namespace kube-system \
+            --set secrets-store-csi-driver.syncSecret.enabled=true
     else
         echo "Helm is already installed."
     fi
