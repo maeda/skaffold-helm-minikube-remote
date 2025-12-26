@@ -1,36 +1,11 @@
-apiVersion: skaffold/v4beta5 # 	version of the configuration.
-kind: Config # 	always Config.
+apiVersion: skaffold/v4beta7
+kind: Config
 metadata:
-  name: airflow
-build:
-  artifacts:
-    - image: airflow
-      context: .
-      sync:
-        infer:
-          - "dags/**/*"
-      docker:
-        dockerfile: AirflowDockerfile
-  local:
-    push: false # do not need if using minikube
-deploy:
-  helm:
-    releases:
-      - name: airflow
-        chartPath: helm/airflow
-        namespace: airflow
-        createNamespace: true
-        valuesFiles:
-          - ./helm/airflow/values-dev.yaml
-        setValueTemplates:
-          airflow.images.airflow.repository: "{{.IMAGE_REPO_airflow}}"
-          airflow.images.airflow.tag: "{{.IMAGE_TAG_airflow}}"
-          airflow.images.airflow.pullPolicy: IfNotPresent
-        setValues:
-          airflow.config.GUNICORN_CMD_ARGS.value: "--log-level DEBUG"
-portForward:
-  - resourceType: service
-    namespace: airflow
-    resourceName: airflow-api-server
-    port: 8080
-    localPort: 8080
+  name: airflow-local
+
+# We import the "No-Build" config from the remote repo
+requires:
+    - path: skaffold-remote-dev.yaml  # Point to the specific dev file
+
+# NO BUILD SECTION! 
+# We rely entirely on the pre-built image + mounts.

@@ -1,0 +1,19 @@
+apiVersion: skaffold/v4beta5 # 	version of the configuration.
+kind: Config # 	always Config.
+metadata:
+  name: airflow-local
+
+deploy:
+  helm:
+    releases:
+      - name: airflow
+        chartPath: helm/airflow
+        namespace: airflow
+        createNamespace: true
+
+portForward:
+  - resourceType: service
+    namespace: airflow
+    resourceName: airflow-api-server
+    port: 8080
+    localPort: 8080

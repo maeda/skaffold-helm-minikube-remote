@@ -1,4 +1,49 @@
 airflow: 
+  image:
+    repository: platform.azurecr.io/udo/airflow
+    tag: latest
+    pullPolicy: Always
+  
+  executor: LocalExecutor
+  
+  redis:
+    enabled: false
+
   postgresql:
     image:
       repository: bitnamilegacy/postgresql
+
+  _mount_template: &dags_mount
+    extraVolumes:
+      - name: local-dags
+        hostPath:
+          path: /app/dags
+          type: Directory
+    extraVolumeMounts:
+      - name: local-dags
+        mountPath: /opt/airflow/dags
+        readOnly: true
+
+  apiServer:
+    <<: *dags_mount
+  dagProcessor:
+    <<: *dags_mount
+  scheduler:
+    <<: *dags_mount
+  triggerer:
+    <<: *dags_mount
+
+  migrateDatabaseJob:
+    useHelmHooks: false  # Makes it a standard job instead of a silent hook
+    
+  createUserJob:
+    useHelmHooks: false
+
+rolesBootstrap:
+  enabled: true
+  roles:
+    - group_1
+    - group_2
+    - group_3
+    - group_4
+    - group_5
