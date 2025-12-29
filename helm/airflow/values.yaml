@@ -1,9 +1,5 @@
 airflow: 
-  image:
-    repository: platform.azurecr.io/udo/airflow
-    tag: latest
-    pullPolicy: Always
-  
+    
   executor: LocalExecutor
   
   redis:
